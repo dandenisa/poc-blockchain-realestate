@@ -22,19 +22,50 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+
+        <!--Postgres -->
+        <jdbc.driver_class>org.postgresql.Driver</jdbc.driver_class>
+        <jdbc.url>jdbc:postgresql://localhost:5432/test_db1</jdbc.url>
+        <db.username>postgres</db.username>
+        <db.password>password</db.password>
+        <db.pool.maxPoolSize>40</db.pool.maxPoolSize>
+        <db.pool.minPoolSize>10</db.pool.minPoolSize>
+        <db.pool.maxIdleTime>300</db.pool.maxIdleTime>
+        <db.show_sql>false</db.show_sql>
+
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-data-jpa</artifactId>-->
+		<!--</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>web3j-spring-boot-starter</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+
 	</dependencies>
 
 	<build>

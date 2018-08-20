@@ -1,0 +1,20 @@
+
+spring:
+  application:
+    name: poc-blockchain-realestate  #current service name to be used by the eureka server
+
+server:
+  port: 9099    #default port where the service will be started
+
+web3j:
+  client-address: http://192.168.99.100:8545
+
+management:
+  security:
+    enabled: false  #disable the spring security on the management endpoints like /env, /refresh etc.
+
+logging:
+  level:
+    com.example.demo1: DEBUG
+
+
