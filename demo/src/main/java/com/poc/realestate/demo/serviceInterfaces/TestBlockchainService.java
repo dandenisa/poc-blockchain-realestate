@@ -1,4 +1,4 @@
-package com.poc.realestate.demo.service;
+package com.poc.realestate.demo.serviceInterfaces;
 
 
 import com.poc.realestate.demo.model.TestBlockchainTransaction;

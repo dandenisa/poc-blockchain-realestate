@@ -2,7 +2,7 @@ package com.poc.realestate.demo.controller;
 
 
 import com.poc.realestate.demo.model.TestBlockchainTransaction;
-import com.poc.realestate.demo.service.TestBlockchainService;
+import com.poc.realestate.demo.serviceInterfaces.TestBlockchainService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

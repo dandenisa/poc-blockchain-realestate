@@ -13,8 +13,8 @@ import rx.Subscription;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.math.BigInteger;
 
-import static java.math.BigInteger.valueOf;
 import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 
@@ -40,7 +40,7 @@ public class TestDemoApplication {
                 log.info("Tx count: {}", transactionCount.getTransactionCount().intValue());
                 if (transactionCount.getTransactionCount().intValue() % 10 == 0) {
                     EthGetTransactionCount tc = web3j.ethGetTransactionCount(coinbase.getAddress(), LATEST).send();
-                    Transaction transaction = Transaction.createEtherTransaction(coinbase.getAddress(), tc.getTransactionCount(), tx.getValue(), valueOf(21_000), tx.getFrom(), tx.getValue());
+                    Transaction transaction = Transaction.createEtherTransaction(coinbase.getAddress(), tc.getTransactionCount(), tx.getValue(), BigInteger.valueOf(21_000), tx.getFrom(), tx.getValue());
                     web3j.ethSendTransaction(transaction).send();
                 }
             } catch (IOException e) {
