@@ -2,13 +2,12 @@ package com.poc.realestate.demo.controller;
 
 import com.poc.realestate.demo.model.PropertyEnlistment;
 import com.poc.realestate.demo.serviceInterfaces.PropertyEnlistmentService;
-import com.poc.realestate.demo.tos.PropertyEnlistmentTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import ma.glasnost.orika.MapperFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +22,7 @@ public class PropertyEnlistmentController {
     @Autowired
     PropertyEnlistmentService propertyEnlistmentService;
 
-    @Autowired
-    @Qualifier("mapperFacade")
-    private MapperFacade mapper;
+    private static final Logger log = LoggerFactory.getLogger(PropertyEnlistmentController.class.getName());
 
     @ApiOperation(value = "Create new enlistment",
             notes = "Create new enlistment")
@@ -37,9 +34,13 @@ public class PropertyEnlistmentController {
     @PostMapping(value = {"/enlistments"})
 
     public ResponseEntity<PropertyEnlistment> createEnlistment(@RequestBody PropertyEnlistment propertyEnlistment) {
-        // PropertyEnlistment pe = mapper.map(propertyEnlistmentTO, PropertyEnlistment.class);
-        PropertyEnlistment property = propertyEnlistmentService.createEnlistment(propertyEnlistment);
-        return new ResponseEntity<>(property, HttpStatus.CREATED);
+        PropertyEnlistment enlistment = null;
+        try {
+            enlistment = propertyEnlistmentService.createEnlistment(propertyEnlistment);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return new ResponseEntity<>(enlistment, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "getEnlistment", notes = "getEnlistment")
@@ -53,6 +54,62 @@ public class PropertyEnlistmentController {
         PropertyEnlistment property = propertyEnlistmentService.getEnlistment(enlistmentId);
         return new ResponseEntity<>(property, HttpStatus.OK);
     }
+
+
+//    @ApiOperation(value = "getEnlistment", notes = "getEnlistment")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "OK"),
+//            @ApiResponse(code = 400, message = "Bad Request"),
+//            @ApiResponse(code = 409, message = "Conflict")
+//    })
+//    @GetMapping(value = {"/enlistments/test"})
+//    public ResponseEntity<String> getAccountsTests() {
+//        String result = null;
+//        try {
+//            result = propertyEnlistmentService.getEthAccountsTEST().get().getBalance().toString();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
+//
+//    @ApiOperation(value = "getEnlistment", notes = "getEnlistment")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "OK"),
+//            @ApiResponse(code = 400, message = "Bad Request"),
+//            @ApiResponse(code = 409, message = "Conflict")
+//    })
+//    @GetMapping(value = {"/enlistments/transactiontest"})
+//    public ResponseEntity<String> getTransactionTests() {
+//        String result = propertyEnlistmentService.getTransactionTEST();
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
+//
+//    @ApiOperation(value = "getEnlistment", notes = "getEnlistment")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "OK"),
+//            @ApiResponse(code = 400, message = "Bad Request"),
+//            @ApiResponse(code = 409, message = "Conflict")
+//    })
+//    @GetMapping(value = {"/enlistments/deploy/smartcontract"})
+//    public ResponseEntity<String> deploySmartContractTest() {
+//        String result = propertyEnlistmentService.loadSmartContract();
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
+//
+//    @ApiOperation(value = "getEnlistment", notes = "getEnlistment")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "OK"),
+//            @ApiResponse(code = 400, message = "Bad Request"),
+//            @ApiResponse(code = 409, message = "Conflict")
+//    })
+//    @GetMapping(value = {"/enlistments/deploy/smartcontractdeployed"})
+//    public ResponseEntity<String> getDeployedSmartContractTest() {
+//        String result = propertyEnlistmentService.loadSmartContractDeployed();
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 
     @ApiOperation(value = "approveEnlistment", notes = "approveEnlistment")
     @ApiResponses(value = {

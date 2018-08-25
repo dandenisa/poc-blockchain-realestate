@@ -3,9 +3,7 @@ package com.poc.realestate.demo.serviceImplementations;
 import com.poc.realestate.demo.model.PropertyEnlistment;
 import com.poc.realestate.demo.repository.PropertyEnlistmentRepository;
 import com.poc.realestate.demo.serviceInterfaces.PropertyEnlistmentService;
-import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +15,6 @@ public class PropertyEnlistmentServiceImpl implements PropertyEnlistmentService 
     @Autowired
     private PropertyEnlistmentRepository propertyEnlistmentRepository;
 
-    @Autowired
-    @Qualifier("mapperFacade")
-    private MapperFacade mapper;
-
     @Override
     @Transactional
     public PropertyEnlistment createEnlistment(PropertyEnlistment propertyEnlistment) {
@@ -30,7 +24,7 @@ public class PropertyEnlistmentServiceImpl implements PropertyEnlistmentService 
     @Override
     @Transactional
     public PropertyEnlistment getEnlistment(long id) {
-        Optional<PropertyEnlistment> property = propertyEnlistmentRepository.findById(id);
+        Optional<PropertyEnlistment> property = getPropertyEnlistmentById(id);
 
         if (property.isPresent()) {
             return property.get();
@@ -41,8 +35,14 @@ public class PropertyEnlistmentServiceImpl implements PropertyEnlistmentService 
 
     @Override
     @Transactional
+    public Optional<PropertyEnlistment> getPropertyEnlistmentById(long id) {
+        return propertyEnlistmentRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
     public void approveEnlistment(long id) {
-        Optional<PropertyEnlistment> property = propertyEnlistmentRepository.findById(id);
+        Optional<PropertyEnlistment> property = getPropertyEnlistmentById(id);
 
         if (property.isPresent()) {
             property.get().approve();
@@ -54,7 +54,7 @@ public class PropertyEnlistmentServiceImpl implements PropertyEnlistmentService 
     @Override
     @Transactional
     public void rejectEnlistment(long id) {
-        Optional<PropertyEnlistment> property = propertyEnlistmentRepository.findById(id);
+        Optional<PropertyEnlistment> property = getPropertyEnlistmentById(id);
 
         if (property.isPresent()) {
             property.get().reject();
@@ -66,7 +66,7 @@ public class PropertyEnlistmentServiceImpl implements PropertyEnlistmentService 
     @Override
     @Transactional
     public void cancelEnlistment(long id) {
-        Optional<PropertyEnlistment> property = propertyEnlistmentRepository.findById(id);
+        Optional<PropertyEnlistment> property = getPropertyEnlistmentById(id);
 
         if (property.isPresent()) {
             property.get().cancel();

@@ -4,6 +4,15 @@ import com.poc.realestate.demo.model.Offer;
 import com.poc.realestate.demo.tos.OfferTO;
 
 public interface OfferService {
-    // OfferTO createOffer(String offererName, String offererEmail, long amount);
-    Offer createOffer(String offererName, String offererEmail, long amount);
+
+    boolean createOffer(long enlistmentId, OfferTO offer);
+
+    OfferTO getOffer(long enlistmentId, String tenantEmail);
+
+    String reviewOffer(long enlistmentId, String tenantEmail, boolean approved);
+
+    Offer getOfferFromRepository(long offerId, long id);
+
+    Offer reviewOfferFromRepository(long offerId, String tenantCnp, boolean approved);
+
 }
