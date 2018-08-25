@@ -1,6 +1,7 @@
 package com.poc.realestate.demo.serviceImplementations;
 
 import com.poc.realestate.demo.ethereum.EnlistmentToContract;
+import com.poc.realestate.demo.model.RentalAgreement;
 import com.poc.realestate.demo.serviceInterfaces.PropertyEnlistmentSmartContractService;
 import com.poc.realestate.demo.tos.OfferTO;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tuples.generated.Tuple5;
 
 import java.io.IOException;
@@ -139,6 +141,7 @@ public class PropertyEnlistmentSmartContractServiceImpl implements PropertyEnlis
     }
 
     @Override
+    @Transactional
     public String reviewOfferFromSmartContract(String contractAddress, String tenantEmail, boolean approved) {
         Admin web3j = Admin.build(new HttpService(GANACHE_URL));
         PersonalUnlockAccount personalUnlockAccount;
@@ -153,6 +156,111 @@ public class PropertyEnlistmentSmartContractServiceImpl implements PropertyEnlis
                 contract = EnlistmentToContract.load(CONTRACT_ADDRESS_1, web3j, credentials, GAS_PRICE, valueOf(3000000));
                 transactionReceipt = contract.reviewOffer(approved, tenantEmail, TEN).sendAsync().get();
 
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            log.error(e.getMessage());
+        }
+        return transactionReceipt.getTransactionHash();
+    }
+
+    @Override
+    @Transactional
+    public String sendAgreementToSmartContract(String contractAddress, RentalAgreement agreement) {
+        Admin web3j = Admin.build(new HttpService(GANACHE_URL));
+        PersonalUnlockAccount personalUnlockAccount;
+        EnlistmentToContract contract;
+        TransactionReceipt transactionReceipt = null;
+
+        try {
+            personalUnlockAccount = web3j.personalUnlockAccount(ACCOUNT_0, "").send();
+
+            if (personalUnlockAccount.accountUnlocked()) {
+                Credentials credentials = getCredentials();
+                contract = EnlistmentToContract.load(contractAddress, web3j, credentials, GAS_PRICE, valueOf(3000000));
+                transactionReceipt = contract.submitDraft(
+                        agreement.getTenantEmail(),
+                        agreement.getLandlordName(),
+                        agreement.getTenantName(),
+                        agreement.getTenantEmail(),
+                        agreement.getLeaseStart(),
+                        agreement.getHandoverDate(),
+                        agreement.getLeasePeriod(),
+                        agreement.getOtherTerms(),
+                        agreement.getHash(), TEN)
+                        .sendAsync().get();
+
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            log.error(e.getMessage());
+        }
+        return transactionReceipt.getTransactionHash();
+    }
+
+    @Override
+    @Transactional
+    public RentalAgreement getAgreementFromSmartContract(String contractAddress, String tenantEmail) {
+        Admin web3j = Admin.build(new HttpService(GANACHE_URL));
+        PersonalUnlockAccount personalUnlockAccount;
+        EnlistmentToContract contract = null;
+        RentalAgreement agreement = null;
+
+        try {
+            personalUnlockAccount = web3j.personalUnlockAccount(ACCOUNT_0, "").send();
+
+            if (personalUnlockAccount.accountUnlocked()) {
+                Credentials credentials = getCredentials();
+                contract = EnlistmentToContract.load(contractAddress, web3j, credentials, GAS_PRICE, valueOf(3000000));
+
+                Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, String> agDetails = contract.getAgreementDetails(tenantEmail).sendAsync().get();
+                Tuple3<String, String, String> agParticipants = contract.getAgreementParticipants(tenantEmail).sendAsync().get();
+                Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, String> agHashes = contract.getAgreementDetails(tenantEmail).sendAsync().get();
+
+                // todo concatenate result
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            log.error(e.getMessage());
+        }
+        return agreement;
+    }
+
+    @Override
+    @Transactional
+    public String reviewAgreementFromSmartContract(String contractAddress, String tenantEmail, boolean approved) {
+        Admin web3j = Admin.build(new HttpService(GANACHE_URL));
+        PersonalUnlockAccount personalUnlockAccount;
+        EnlistmentToContract contract;
+        TransactionReceipt transactionReceipt = null;
+
+        try {
+            personalUnlockAccount = web3j.personalUnlockAccount(ACCOUNT_0, "").send();
+
+            if (personalUnlockAccount.accountUnlocked()) {
+                Credentials credentials = getCredentials();
+                contract = EnlistmentToContract.load(contractAddress, web3j, credentials, GAS_PRICE, valueOf(3000000));
+                transactionReceipt = contract.reviewAgreement(tenantEmail, approved, TEN).sendAsync().get();
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            log.error(e.getMessage());
+        }
+        return transactionReceipt.getTransactionHash();
+
+    }
+
+    @Override
+    @Transactional
+    public String cancelAgreementFromSmartContract(String contractAddress, String tenantEmail) {
+        Admin web3j = Admin.build(new HttpService(GANACHE_URL));
+        PersonalUnlockAccount personalUnlockAccount;
+        EnlistmentToContract contract;
+        TransactionReceipt transactionReceipt = null;
+
+        try {
+            personalUnlockAccount = web3j.personalUnlockAccount(ACCOUNT_0, "").send();
+
+            if (personalUnlockAccount.accountUnlocked()) {
+                Credentials credentials = getCredentials();
+                contract = EnlistmentToContract.load(contractAddress, web3j, credentials, GAS_PRICE, valueOf(3000000));
+                transactionReceipt = contract.cancelAgreement(tenantEmail, TEN).sendAsync().get();
             }
         } catch (IOException | InterruptedException | ExecutionException e) {
             log.error(e.getMessage());
